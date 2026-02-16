@@ -10,7 +10,7 @@ const App = () => {
   // useCallback prevents unnecessary re-renders and satisfies ESLint
   const fetchLogs = useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:5050/api/logs');
+      const response = await axios.get('https://edge-alert-api.onrender.com/api/logs');
       setLogs(response.data);
     } catch (error) {
       console.error("Error fetching logs:", error);

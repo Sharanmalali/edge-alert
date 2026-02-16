@@ -6,7 +6,7 @@ require('dotenv').config();
 // CONFIGURATION
 const REGION = "MacBook-Local-Node"; 
 const TARGET_URL = "https://www.google.com"; // The site we are monitoring
-const CENTRAL_API = "http://localhost:5050/api/report"; // Your Brain's address
+const CENTRAL_API = "https://edge-alert-api.onrender.com/api/report";
 
 console.log(`🚀 Probe started for region: ${REGION}`);
 

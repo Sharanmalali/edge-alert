@@ -4,14 +4,19 @@ const mongoose = require('mongoose');
 const path = require('path');
 require('dotenv').config();
 
-// Important: Ensure this path correctly points to your models folder
 const PingLog = require('./models/PingLog'); 
 
 const app = express();
 const PORT = process.env.PORT || 5050;
 
-// Middleware
-app.use(cors());
+// --- UPDATED MIDDLEWARE ---
+// This allows your Vercel URL to access the data. 
+// Replace 'https://your-project-name.vercel.app' with your actual Vercel link!
+app.use(cors({
+    origin: '*', // For the project submission, '*' is easiest as it allows all origins
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
+}));
 app.use(express.json());
 
 // MongoDB Connection logic
@@ -21,30 +26,25 @@ const connectDB = async () => {
         console.log("✅ Connected to MongoDB Atlas");
     } catch (err) {
         console.error("❌ MongoDB Connection Error:", err.message);
-        // Don't kill the server, but log the error
     }
 };
 
 connectDB();
 
-// Test Route
 app.get('/', (req, res) => {
     res.send('Edge-Alert Central API is Running!');
 });
 
-// Endpoint for Probes to report data
 app.post('/api/report', async (req, res) => {
     try {
-        console.log("Incoming Data:", req.body); // Useful for debugging what the probe sends
-        
+        console.log("Incoming Data:", req.body);
         const { region, url, status, latency } = req.body;
         
-        // Creating the new document using the model constructor
         const newLog = new PingLog({ 
             region, 
             url, 
             status, 
-            latency: Number(latency) // Ensuring latency is a number
+            latency: Number(latency)
         });
         
         await newLog.save();
@@ -58,7 +58,6 @@ app.post('/api/report', async (req, res) => {
     }
 });
 
-// Endpoint for React Frontend to get history
 app.get('/api/logs', async (req, res) => {
     try {
         const logs = await PingLog.find().sort({ timestamp: -1 }).limit(50);
@@ -69,5 +68,5 @@ app.get('/api/logs', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Server is purring on http://localhost:${PORT}`);
+    console.log(`🚀 Server is purring on port ${PORT}`);
 });
